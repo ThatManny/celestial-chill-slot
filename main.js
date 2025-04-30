@@ -1,5 +1,7 @@
-import * as PIXI from 'https://cdn.skypack.dev/pixi.js@7.2.4';
+
 import { CelestialChillGame } from './game.js';
+
+const PIXI = window.PIXI;
 
 
 window.addEventListener("DOMContentLoaded", () => {
