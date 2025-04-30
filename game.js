@@ -19,30 +19,68 @@ spinReels() {
   const symbolSize = 100;
   const spinDuration = 0.5;
 
+  this.symbolGrid = []; // 2D array: [reel][row]
+
   for (let i = 0; i < this.reels.length; i++) {
     const reel = this.reels[i];
 
-    // Animate the reel down by a small offset
     gsap.to(reel, {
       y: reel.y + 50,
       duration: spinDuration,
       ease: "power1.in",
       onComplete: () => {
-        // After animation, reset Y and refresh symbols
         reel.y -= 50;
         reel.removeChildren();
+
+        const column = [];
 
         for (let j = 0; j < 7; j++) {
           const symbolName = getRandomSymbol();
           const symbol = createSymbolSprite(symbolName);
           symbol.y = j * symbolSize;
           reel.addChild(symbol);
+          column.push(symbolName); // Track symbol ID
+        }
+
+        this.symbolGrid[i] = column;
+
+        // When all reels have spun, check wins
+        if (i === this.reels.length - 1) {
+          setTimeout(() => this.checkPayouts(), 300); // small delay for visual sync
         }
       },
-      delay: i * 0.1 // stagger each reel slightly for slot feel
-    });
+      delay: i * 0.1
+
+      checkPayouts() {
+  const numRows = 7;       // number of visible rows
+  const minMatch = 3;      // how many symbols needed to win
+
+  for (let row = 0; row < numRows; row++) {
+    let currentSymbol = null;
+    let matchCount = 0;
+
+    for (let col = 0; col < this.symbolGrid.length; col++) {
+      const symbol = this.symbolGrid[col][row];
+
+      if (symbol === currentSymbol) {
+        matchCount++;
+      } else {
+        // check for a completed match streak
+        if (matchCount >= minMatch) {
+          console.log(`Win! ${matchCount}x ${currentSymbol} on row ${row + 1}`);
+        }
+        currentSymbol = symbol;
+        matchCount = 1;
+      }
+    }
+
+    // Final check at end of row
+    if (matchCount >= minMatch) {
+      console.log(`Win! ${matchCount}x ${currentSymbol} on row ${row + 1}`);
+    }
   }
 }
+
 
 
   this.reels = [];
@@ -90,6 +128,15 @@ this.app.stage.addChild(spinButton);
 
     this.loadAssets();
   }
+PIXI.Loader.shared
+  .add("W1", "assets/wild_phoenix.png")
+  .add("S1", "assets/scatter_wings.png")
+  .add("F1", "assets/golden_feather.png")
+  .add("L1", "assets/feathergreen.png")
+  .add("L2", "assets/featherred.png")
+  .add("L3", "assets/featherpurple.png")
+  .add("L4", "assets/featherblue.png")
+  .load(() => this.init());
 
 
 onAssetsLoaded(resources) {
@@ -206,4 +253,8 @@ function createSymbolSprite(name) {
   container.addChild(label);
 
   return container;
+}
+function getRandomSymbol() {
+  const symbolPool = ["L1", "L2", "L3", "L4", "F1", "W1", "S1"];
+  return symbolPool[Math.floor(Math.random() * symbolPool.length)];
 }
