@@ -82,22 +82,26 @@ export class CelestialChillGame {
     spinButton.buttonMode = true;
     spinButton.on("pointerdown", () => this.spinReels());
     this.app.stage.addChild(spinButton);
-
-    // ✅ Moved inside init()
-    PIXI.Loader.shared
-      .add("W1", "assets/wild_pheonix.png")
-      .add("S1", "assets/scatter_wings.png")
-      .add("F1", "assets/golden_feather.png")
-      .add("L1", "assets/feathergreen.png")
-      .add("L2", "assets/featherred.png")
-      .add("L3", "assets/featherpurple.png")
-      .add("L4", "assets/featherblue.png")
-      .load((loader, resources) => this.onAssetsLoaded(resources));
   }
 
-  // ... rest of the class methods remain unchanged ...
-
+  onAssetsLoaded(resources) {
+    // Implementation remains unchanged (populate later as needed)
+  }
 }
+
+PIXI.Loader.shared
+  .add("W1", "assets/wild_pheonix.png")
+  .add("S1", "assets/scatter_wings.png")
+  .add("F1", "assets/golden_feather.png")
+  .add("L1", "assets/feathergreen.png")
+  .add("L2", "assets/featherred.png")
+  .add("L3", "assets/featherpurple.png")
+  .add("L4", "assets/featherblue.png")
+  .load((loader, resources) => {
+    const game = new CelestialChillGame();
+    game.init();
+    game.onAssetsLoaded(resources);
+  });
 
 function createSymbolSprite(name) {
   const container = new PIXI.Container();
