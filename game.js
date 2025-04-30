@@ -1,9 +1,10 @@
 export class CelestialChillGame {
-  constructor(PIXI) {
-    this.PIXI = PIXI;
-    this.app = null;
-    this.score = 0;
-    this.reels = [];
+ constructor() {
+  this.app = null;
+  this.score = 0;
+  this.reels = [];
+}
+
 
     this.PIXI.Loader.shared
       .add("W1", "assets/wild_pheonix.png")
