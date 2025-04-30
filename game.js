@@ -3,6 +3,19 @@ export class CelestialChillGame {
     this.app = null;
     this.score = 0;
     this.reels = [];
+
+    PIXI.Loader.shared
+      .add("W1", "assets/wild_pheonix.png")
+      .add("S1", "assets/scatter_wings.png")
+      .add("F1", "assets/golden_feather.png")
+      .add("L1", "assets/feathergreen.png")
+      .add("L2", "assets/featherred.png")
+      .add("L3", "assets/featherpurple.png")
+      .add("L4", "assets/featherblue.png")
+      .load((loader, resources) => {
+        this.init();
+        this.onAssetsLoaded(resources);
+      });
   }
 
   init() {
@@ -89,20 +102,6 @@ export class CelestialChillGame {
   }
 }
 
-PIXI.Loader.shared
-  .add("W1", "assets/wild_pheonix.png")
-  .add("S1", "assets/scatter_wings.png")
-  .add("F1", "assets/golden_feather.png")
-  .add("L1", "assets/feathergreen.png")
-  .add("L2", "assets/featherred.png")
-  .add("L3", "assets/featherpurple.png")
-  .add("L4", "assets/featherblue.png")
-  .load((loader, resources) => {
-    const game = new CelestialChillGame();
-    game.init();
-    game.onAssetsLoaded(resources);
-  });
-
 function createSymbolSprite(name) {
   const container = new PIXI.Container();
   const colorMap = {
@@ -142,6 +141,7 @@ function getRandomSymbol() {
   const symbolPool = ["L1", "L2", "L3", "L4", "F1", "W1", "S1"];
   return symbolPool[Math.floor(Math.random() * symbolPool.length)];
 }
+
 
 
   checkPayouts() {
