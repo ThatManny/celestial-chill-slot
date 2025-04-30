@@ -83,27 +83,258 @@ export class CelestialChillGame {
     spinButton.on("pointerdown", () => this.spinReels());
     this.app.stage.addChild(spinButton);
   }
+PIXI.Loader.shared
+  .add("W1", "assets/wild_pheonix.png")
+  .add("S1", "assets/scatter_wings.png")
+  .add("F1", "assets/golden_feather.png")
+  .add("L1", "assets/feathergreen.png")
+  .add("L2", "assets/featherred.png")
+  .add("L3", "assets/featherpurple.png")
+  .add("L4", "assets/featherblue.png")
+  .load((loader, resources) => this.onAssetsLoaded(resources));
 
   spinReels() {
-    // ... you will place reel logic here ...
+  const symbolSize = 100;
+  const spinDuration = 0.5;
+
+  // Reset win message and symbol tints
+  this.winMessage.text = "";
+  for (const reel of this.reels) {
+    for (const child of reel.children) {
+      child.tint = 0xffffff;
+    }
   }
 
-  checkPayouts() {
-    // ... you will place payout logic here ...
-  }
+  this.symbolGrid = []; // 2D array: [reel][row]
 
-  startFreeSpins() {
-    // ... you will place free spin start logic here ...
-  }
+  for (let i = 0; i < this.reels.length; i++) {
+    const reel = this.reels[i];
+    const column = [];
 
-  autoSpinNext() {
-    // ... you will place auto-spin logic here ...
-  }
+    gsap.to(reel, {
+      y: reel.y + 50,
+      duration: spinDuration,
+      ease: "power1.in",
+      onComplete: () => {
+        reel.y -= 50;
+        reel.removeChildren();
 
-  onAssetsLoaded(resources) {
-    // ... you will place asset loading and animation here ...
+        for (let j = 0; j < 7; j++) {
+          const symbolName = getRandomSymbol();
+          const sprite = createSymbolSprite(symbolName);
+          sprite.y = j * symbolSize;
+          reel.addChild(sprite);
+          column.push({ name: symbolName, sprite: sprite });
+        }
+
+        this.symbolGrid[i] = column;
+
+        // Check payouts after the last reel finishes spinning
+        if (i === this.reels.length - 1) {
+          setTimeout(() => this.checkPayouts(), 300);
+        }
+      },
+      delay: i * 0.1
+    });
   }
 }
+
+
+ checkPayouts() {
+  const numRows = 7;
+  const minMatch = 3;
+  let scatterCount = 0;
+  let foundWin = false;
+
+  for (let row = 0; row < numRows; row++) {
+    let currentSymbol = null;
+    let matchCount = 0;
+
+    for (let col = 0; col < this.symbolGrid.length; col++) {
+      const cell = this.symbolGrid[col][row];
+      const symbol = cell.name;
+
+      // Count scatters globally
+      if (symbol === "S1") {
+        scatterCount++;
+      }
+
+      if (symbol === currentSymbol) {
+        matchCount++;
+      } else {
+        if (matchCount >= minMatch) {
+          this.handleWin(currentSymbol, matchCount, row, col - matchCount);
+          foundWin = true;
+        }
+        currentSymbol = symbol;
+        matchCount = 1;
+      }
+    }
+
+    // Final check at end of row
+    if (matchCount >= minMatch) {
+      this.handleWin(currentSymbol, matchCount, row, this.symbolGrid.length - matchCount);
+      foundWin = true;
+    }
+  }
+
+  // Handle scatter trigger or retrigger
+  if (scatterCount >= 3) {
+    if (this.isFreeSpins) {
+      this.freeSpinsRemaining += 5;
+      this.freeSpinsLabel.text = `Free Spins Left: ${this.freeSpinsRemaining}`;
+      this.winMessage.text = `Retriggered! +5 Free Spins! (${scatterCount} Scatters)`;
+    } else {
+      this.winMessage.text = `Bonus Triggered! ${scatterCount} Scatters!`;
+      this.startFreeSpins();
+      return;
+    }
+    foundWin = true;
+  }
+
+  if (!foundWin) {
+    this.winMessage.text = "No win. Try again!";
+  }
+
+  // Fade out win message
+  gsap.to(this.winMessage, {
+    alpha: 0,
+    delay: 2.5,
+    duration: 1,
+    onStart: () => {
+      this.winMessage.alpha = 1;
+    }
+  });
+}
+handleWin(symbol, count, row, startCol) {
+  const multiplier = this.isFreeSpins ? this.bonusMultiplier : 1;
+  const baseReward = count * 10;
+  const reward = baseReward * multiplier;
+
+  this.score += reward;
+  this.scoreLabel.text = `Coins: ${this.score}`;
+  this.winMessage.text = `Win! ${count}x ${symbol} on row ${row + 1} (x${multiplier}) = +${reward} coins`;
+
+  // Highlight winning symbols
+  for (let i = startCol; i < startCol + count; i++) {
+    const matchSprite = this.symbolGrid[i][row].sprite;
+    matchSprite.tint = 0xffff00;
+  }
+}
+
+
+startFreeSpins() {
+  this.isFreeSpins = true;
+  this.freeSpinsRemaining = 5;
+  this.bonusMultiplier = 2;
+
+  // Visual cue for free spins mode
+  this.app.renderer.backgroundColor = 0x111133;
+
+  this.winMessage.text = "🎉 Free Spins Started!";
+  this.winMessage.alpha = 1;
+
+  this.freeSpinsLabel.text = `Free Spins Left: ${this.freeSpinsRemaining}`;
+  this.freeSpinsLabel.alpha = 1;
+
+  this.autoSpinNext(); // begin auto spins
+}
+
+
+ autoSpinNext() {
+  if (this.freeSpinsRemaining > 0) {
+    this.freeSpinsRemaining--;
+    this.freeSpinsLabel.text = `Free Spins Left: ${this.freeSpinsRemaining}`;
+    this.freeSpinsLabel.alpha = 1;
+
+    this.spinReels();
+
+    setTimeout(() => this.autoSpinNext(), 2000); // delay between spins
+  } else {
+    this.isFreeSpins = false;
+    this.app.renderer.backgroundColor = 0x0a1a2f; // reset background
+    this.winMessage.text = "Free Spins Complete!";
+    this.freeSpinsLabel.text = "";
+  }
+}
+
+
+onAssetsLoaded(resources) {
+  // === WILD PHOENIX ===
+  const wild = new PIXI.Sprite.from("assets/wild_pheonix.png");
+  wild.anchor.set(0.5);
+  wild.x = this.app.screen.width / 2 - 300;
+  wild.y = this.app.screen.height / 2;
+  wild.scale.set(0.6);
+  this.app.stage.addChild(wild);
+
+  // Glow & motion effects
+  gsap.to(wild.scale, {
+    x: 0.65,
+    y: 0.65,
+    duration: 0.8,
+    yoyo: true,
+    repeat: -1,
+    ease: "sine.inOut"
+  });
+
+  gsap.to(wild, {
+    y: wild.y - 10,
+    duration: 1.2,
+    yoyo: true,
+    repeat: -1,
+    ease: "sine.inOut"
+  });
+
+  gsap.to(wild, {
+    alpha: 0.9,
+    duration: 0.3,
+    yoyo: true,
+    repeat: -1,
+    ease: "power1.inOut"
+  });
+
+  // === SCATTER WINGS ===
+  const scatter = new PIXI.Sprite.from("assets/scatter_wings.png");
+  scatter.anchor.set(0.5);
+  scatter.x = this.app.screen.width / 2 + 300;
+  scatter.y = this.app.screen.height / 2;
+  scatter.scale.set(0.6);
+  this.app.stage.addChild(scatter);
+
+  // Blur effect
+  const blur = new PIXI.filters.BlurFilter();
+  blur.blur = 0;
+  scatter.filters = [blur];
+
+  gsap.to(blur, {
+    blur: 3,
+    duration: 1.5,
+    yoyo: true,
+    repeat: -1,
+    ease: "sine.inOut"
+  });
+
+  // Glow filter (requires glow filter script)
+  const glow = new PIXI.filters.GlowFilter({
+    distance: 15,
+    outerStrength: 2,
+    innerStrength: 0,
+    color: 0x00ccff,
+    quality: 0.5
+  });
+  scatter.filters.push(glow);
+
+  // Horizontal flip animation
+  gsap.to(scatter.scale, {
+    x: -0.6,
+    duration: 2,
+    yoyo: true,
+    repeat: -1,
+    ease: "sine.inOut"
+  });
+}
+
 
 function createSymbolSprite(name) {
   const container = new PIXI.Container();
