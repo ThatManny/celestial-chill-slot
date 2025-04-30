@@ -53,3 +53,38 @@ onAssetsLoaded(resources) {
     ease: "power1.inOut"
   });
 }
+// Load the scatter wings image
+const scatter = new PIXI.Sprite.from("assets/scatter_wings.png");
+scatter.anchor.set(0.5);
+scatter.x = this.app.screen.width / 2 + 300; // position to the right of wild
+scatter.y = this.app.screen.height / 2;
+scatter.scale.set(0.6);
+this.app.stage.addChild(scatter);
+
+// Add pulsing glow
+gsap.to(scatter.scale, {
+  x: 0.65,
+  y: 0.65,
+  duration: 0.8,
+  yoyo: true,
+  repeat: -1,
+  ease: "sine.inOut"
+});
+
+// Add floating motion
+gsap.to(scatter, {
+  y: scatter.y - 10,
+  duration: 1.2,
+  yoyo: true,
+  repeat: -1,
+  ease: "sine.inOut"
+});
+
+// Optional: flicker alpha
+gsap.to(scatter, {
+  alpha: 0.9,
+  duration: 0.3,
+  yoyo: true,
+  repeat: -1,
+  ease: "power1.inOut"
+});
