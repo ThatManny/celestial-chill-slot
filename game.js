@@ -84,7 +84,7 @@ export class CelestialChillGame {
     this.app.stage.addChild(spinButton);
 
     PIXI.Loader.shared
-      .add("W1", "assets/wild_pheonix.png")
+      .add("W1", "assets/wild_phoenix.png")
       .add("S1", "assets/scatter_wings.png")
       .add("F1", "assets/golden_feather.png")
       .add("L1", "assets/feathergreen.png")
