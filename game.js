@@ -6,11 +6,17 @@ export class CelestialChillGame {
   }
 
   init() {
+    const canvas = document.getElementById('game-canvas');
+    if (!canvas) {
+      console.error("Canvas not found. Make sure it exists in the HTML before calling init().");
+      return;
+    }
+
     this.app = new PIXI.Application({
       width: 1280,
       height: 720,
       backgroundColor: 0x0a1a2f,
-      view: document.getElementById('game-canvas')
+      view: canvas
     });
 
     this.freeSpinsLabel = new PIXI.Text("", {
@@ -82,18 +88,6 @@ export class CelestialChillGame {
     spinButton.buttonMode = true;
     spinButton.on("pointerdown", () => this.spinReels());
     this.app.stage.addChild(spinButton);
-
-    PIXI.Loader.shared
-      .add("W1", "assets/wild_phoenix.png")
-      .add("S1", "assets/scatter_wings.png")
-      .add("F1", "assets/golden_feather.png")
-      .add("L1", "assets/feathergreen.png")
-      .add("L2", "assets/featherred.png")
-      .add("L3", "assets/featherpurple.png")
-      .add("L4", "assets/featherblue.png")
-      .load((loader, resources) => {
-        this.onAssetsLoaded(resources);
-      });
   }
 
   onAssetsLoaded(resources) {
