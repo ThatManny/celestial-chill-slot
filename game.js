@@ -26,7 +26,12 @@ export class CelestialChillGame {
       fontWeight: "bold"
     });
     this.freeSpinsLabel.anchor.set(0.5);
-    this.freeSpinsLabel.x = this.app.screen.width / 2;
+    if (!this.app || !this.app.screen) {
+  console.error("PIXI Application or screen is not ready.");
+  return;
+}
+this.freeSpinsLabel.x = this.app.screen.width / 2;
+
     this.freeSpinsLabel.y = 80;
     this.app.stage.addChild(this.freeSpinsLabel);
 
