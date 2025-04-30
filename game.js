@@ -1,25 +1,9 @@
 export class CelestialChillGame {
- constructor() {
-  this.app = null;
-  this.score = 0;
-  this.reels = [];
-}
-
-
-    this.PIXI.Loader.shared
-      .add("W1", "assets/wild_pheonix.png")
-      .add("S1", "assets/scatter_wings.png")
-      .add("F1", "assets/golden_feather.png")
-      .add("L1", "assets/feathergreen.png")
-      .add("L2", "assets/featherred.png")
-      .add("L3", "assets/featherpurple.png")
-      .add("L4", "assets/featherblue.png")
-      .load((loader, resources) => {
-        this.init();
-        this.onAssetsLoaded(resources);
-      });
+  constructor() {
+    this.app = null;
+    this.score = 0;
+    this.reels = [];
   }
-
 
   init() {
     this.app = new PIXI.Application({
@@ -98,6 +82,18 @@ export class CelestialChillGame {
     spinButton.buttonMode = true;
     spinButton.on("pointerdown", () => this.spinReels());
     this.app.stage.addChild(spinButton);
+
+    PIXI.Loader.shared
+      .add("W1", "assets/wild_pheonix.png")
+      .add("S1", "assets/scatter_wings.png")
+      .add("F1", "assets/golden_feather.png")
+      .add("L1", "assets/feathergreen.png")
+      .add("L2", "assets/featherred.png")
+      .add("L3", "assets/featherpurple.png")
+      .add("L4", "assets/featherblue.png")
+      .load((loader, resources) => {
+        this.onAssetsLoaded(resources);
+      });
   }
 
   onAssetsLoaded(resources) {
@@ -144,4 +140,3 @@ function getRandomSymbol() {
   const symbolPool = ["L1", "L2", "L3", "L4", "F1", "W1", "S1"];
   return symbolPool[Math.floor(Math.random() * symbolPool.length)];
 }
-
