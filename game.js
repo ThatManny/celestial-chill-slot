@@ -1,4 +1,4 @@
-import * as PIXI from 'https://cdn.skypack.dev/pixi.js@7.2.4';
+const PIXI = window.PIXI;
 
 export class CelestialChillGame {
   constructor() {
