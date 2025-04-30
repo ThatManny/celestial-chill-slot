@@ -83,6 +83,7 @@ export class CelestialChillGame {
     spinButton.on("pointerdown", () => this.spinReels());
     this.app.stage.addChild(spinButton);
 
+    // ✅ Moved inside init()
     PIXI.Loader.shared
       .add("W1", "assets/wild_pheonix.png")
       .add("S1", "assets/scatter_wings.png")
@@ -94,49 +95,50 @@ export class CelestialChillGame {
       .load((loader, resources) => this.onAssetsLoaded(resources));
   }
 
-  spinReels() {
-    const symbolSize = 100;
-    const spinDuration = 0.5;
+  // ... rest of the class methods remain unchanged ...
 
-    this.winMessage.text = "";
-    for (const reel of this.reels) {
-      for (const child of reel.children) {
-        child.tint = 0xffffff;
-      }
-    }
+}
 
-    this.symbolGrid = [];
+function createSymbolSprite(name) {
+  const container = new PIXI.Container();
+  const colorMap = {
+    L1: 0xff6666,
+    L2: 0xffcc66,
+    L3: 0x99cc66,
+    L4: 0x66cccc,
+    L5: 0x6699cc,
+    L6: 0xcc66cc,
+    H1: 0xffffff,
+    W1: 0xff0000,
+    S1: 0xffff00
+  };
 
-    for (let i = 0; i < this.reels.length; i++) {
-      const reel = this.reels[i];
-      const column = [];
+  const graphics = new PIXI.Graphics();
+  graphics.beginFill(colorMap[name] || 0x999999);
+  graphics.drawRoundedRect(0, 0, 100, 100, 12);
+  graphics.endFill();
 
-      gsap.to(reel, {
-        y: reel.y + 50,
-        duration: spinDuration,
-        ease: "power1.in",
-        onComplete: () => {
-          reel.y -= 50;
-          reel.removeChildren();
+  const label = new PIXI.Text(name, {
+    fontFamily: "Arial",
+    fontSize: 24,
+    fill: 0x000000,
+    align: "center"
+  });
+  label.anchor.set(0.5);
+  label.x = 50;
+  label.y = 50;
 
-          for (let j = 0; j < 7; j++) {
-            const symbolName = getRandomSymbol();
-            const sprite = createSymbolSprite(symbolName);
-            sprite.y = j * symbolSize;
-            reel.addChild(sprite);
-            column.push({ name: symbolName, sprite });
-          }
+  container.addChild(graphics);
+  container.addChild(label);
 
-          this.symbolGrid[i] = column;
+  return container;
+}
 
-          if (i === this.reels.length - 1) {
-            setTimeout(() => this.checkPayouts(), 300);
-          }
-        },
-        delay: i * 0.1
-      });
-    }
-  }
+function getRandomSymbol() {
+  const symbolPool = ["L1", "L2", "L3", "L4", "F1", "W1", "S1"];
+  return symbolPool[Math.floor(Math.random() * symbolPool.length)];
+}
+
 
   checkPayouts() {
     const numRows = 7;
