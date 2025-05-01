@@ -1,8 +1,6 @@
-console.log("▶️ game.js loaded");
-
 import * as PIXI from 'https://cdn.jsdelivr.net/npm/pixi.js@7.4.2/+esm';
-import { GlowFilter } from 'https://cdn.jsdelivr.net/npm/@pixi/filter-glow/+esm';
-import { BlurFilter } from 'https://cdn.jsdelivr.net/npm/@pixi/filter-blur/+esm';
+import { GlowFilter }  from 'https://cdn.jsdelivr.net/npm/@pixi/filter-glow/+esm';
+import { BlurFilter }  from 'https://cdn.jsdelivr.net/npm/@pixi/filter-blur/+esm';
 
 export class CelestialChillGame {
   constructor() {
@@ -13,81 +11,81 @@ export class CelestialChillGame {
     this.spinning = false;
   }
 
-init() {
-  console.log("🚀 init() called");               // (A)
-
-  const canvas = document.getElementById('game-canvas');
-  if (!canvas) {
-    console.error("Canvas not found!");
-    return;
-  }
-
-  this.app = new PIXI.Application({ view: canvas });
-  console.log("PIXI.Application created:", this.app);  // (B)
-
-  
-  this.freeSpinsLabel = new PIXI.Text('', {
-    fontFamily: 'Arial', fontSize: 24, fill: 0x66ccff, fontWeight: 'bold'
-  });
-  this.freeSpinsLabel.anchor.set(0.5);
-  this.freeSpinsLabel.x = this.app.screen.width / 2;
-  this.freeSpinsLabel.y = 80;
-  this.app.stage.addChild(this.freeSpinsLabel);
-
-  
-  this.scoreLabel = new PIXI.Text('Coins: 0', {
-    fontFamily: 'Arial', fontSize: 24, fill: 0xffcc00, fontWeight: 'bold'
-  });
-  this.scoreLabel.anchor.set(0.5);
-  this.scoreLabel.x = this.app.screen.width / 2;
-  this.scoreLabel.y = 110;
-  this.app.stage.addChild(this.scoreLabel);
-
-  
-  this.winMessage = new PIXI.Text('', {
-    fontFamily: 'Arial', fontSize: 32, fill: 0xffff66,
-    stroke: 0x000000, strokeThickness: 4
-  });
-  this.winMessage.anchor.set(0.5);
-  this.winMessage.x = this.app.screen.width / 2;
-  this.winMessage.y = 40;
-  this.app.stage.addChild(this.winMessage);
-
- 
-  const reelCount = 6, symbolsPerReel = 7,
-        symbolSize = 100, reelSpacing = 120,
-        offsetX = 100, offsetY = 100;
-
-  for (let i = 0; i < reelCount; i++) {
-    const reel = new PIXI.Container();
-    reel.x = offsetX + i * reelSpacing;
-    reel.y = offsetY;
-    this.app.stage.addChild(reel);
-    this.reels.push(reel);
-
-    for (let j = 0; j < symbolsPerReel; j++) {
-      const symbolName = getRandomSymbol();
-      const symbol = createSymbolSprite.call(this, symbolName);
-      symbol.y = j * symbolSize;
-      reel.addChild(symbol);
+  init() {
+    const canvas = document.getElementById('game-canvas');
+    if (!canvas) {
+      console.error("Canvas not found.");
+      return;
     }
+
+    this.app = new PIXI.Application({
+      width: 1280,
+      height: 720,
+      backgroundColor: 0x000000,
+      view: canvas
+    });
+
+    
+    this.freeSpinsLabel = new PIXI.Text('', {
+      fontFamily: 'Arial', fontSize: 24, fill: 0x66ccff, fontWeight: 'bold'
+    });
+    this.freeSpinsLabel.anchor.set(0.5);
+    this.freeSpinsLabel.x = this.app.screen.width / 2;
+    this.freeSpinsLabel.y = 80;
+    this.app.stage.addChild(this.freeSpinsLabel);
+
+    this.scoreLabel = new PIXI.Text('Coins: 0', {
+      fontFamily: 'Arial', fontSize: 24, fill: 0xffcc00, fontWeight: 'bold'
+    });
+    this.scoreLabel.anchor.set(0.5);
+    this.scoreLabel.x = this.app.screen.width / 2;
+    this.scoreLabel.y = 110;
+    this.app.stage.addChild(this.scoreLabel);
+
+    this.winMessage = new PIXI.Text('', {
+      fontFamily: 'Arial', fontSize: 32,
+      fill: 0xffff66, stroke: 0x000000, strokeThickness: 4
+    });
+    this.winMessage.anchor.set(0.5);
+    this.winMessage.x = this.app.screen.width / 2;
+    this.winMessage.y = 40;
+    this.app.stage.addChild(this.winMessage);
+
+   
+    const reelCount       = 6;
+    const symbolsPerReel  = 7;
+    const symbolSize      = 100;
+    const reelSpacing     = 120;
+    const offsetX         = 100;
+    const offsetY         = 100;
+
+    for (let i = 0; i < reelCount; i++) {
+      const reel = new PIXI.Container();
+      reel.x = offsetX + i * reelSpacing;
+      reel.y = offsetY;
+      this.app.stage.addChild(reel);
+      this.reels.push(reel);
+
+      for (let j = 0; j < symbolsPerReel; j++) {
+        const symbolName = getRandomSymbol();
+        const symbol     = createSymbolSprite.call(this, symbolName);
+        symbol.y         = j * symbolSize + offsetY;
+        reel.addChild(symbol);
+      }
+    }
+
+    
+    const spinButton = new PIXI.Text('SPIN', {
+      fontFamily: 'Arial', fontSize: 36, fill: 0xffffff, fontWeight: 'bold'
+    });
+    spinButton.anchor.set(0.5);
+    spinButton.x = this.app.screen.width / 2;
+    spinButton.y = this.app.screen.height - 200;  
+    spinButton.eventMode = 'static';
+    spinButton.buttonMode = true;
+    spinButton.on('pointerdown', () => this.spinReels());
+    this.app.stage.addChild(spinButton);
   }
-
-  
-  const spinButton = new PIXI.Text('SPIN', {
-    fontFamily: 'Arial', fontSize: 36, fill: 0xffffff, fontWeight: 'bold'
-  });
-  spinButton.anchor.set(0.5);
-  spinButton.x = this.app.screen.width / 2;
-  spinButton.y = this.app.screen.height - 200;  
-spinButton.eventMode = 'static';   
-spinButton.buttonMode = true;     
-  spinButton.on('pointerdown', () => this.spinReels());
-  this.app.stage.addChild(spinButton);
-
-  console.log("Finished building UI & reels");     // (C)
-}
-
 
   onAssetsLoaded(resources) {
     this.symbolTextures = {
@@ -99,39 +97,47 @@ spinButton.buttonMode = true;
       L3: resources['assets/featherpurple.png'].texture,
       L4: resources['assets/featherblue.png'].texture,
     };
-  } 
-spinReels() {
-  if (this.spinning) return;
-  this.spinning = true;
+  }
 
-  const promises = this.reels.map((reel, i) => {
-    return new Promise(resolve => {
-     
-      reel.filters = [ new BlurFilter(4) ];
+  spinReels() {
+    if (this.spinning) return;
+    this.spinning = true;
 
-      gsap.to(reel, {
-        y: reel.y + 600,
-        duration: 0.6 + i * 0.1,
-        ease: 'power4.out',
-        onComplete: () => {
-         
-          reel.filters = [];
+    const offsetY = 100;  
 
-          reel.y = offsetY;      
-          reel.removeChildren();
-         
-          resolve();
-        }
+    const promises = this.reels.map((reel, i) => {
+      return new Promise(resolve => {
+        
+        reel.filters = [ new BlurFilter(4) ];
+
+        gsap.to(reel, {
+          y: reel.y + 600,
+          duration: 0.6 + i * 0.1,
+          ease: 'power4.out',
+          onComplete: () => {
+            
+            reel.filters = [];
+
+          
+            reel.y = offsetY;
+            reel.removeChildren();
+            for (let j = 0; j < 7; j++) {
+              const name = getRandomSymbol();
+              const s    = createSymbolSprite.call(this, name);
+              s.y        = j * 100 + offsetY;
+              reel.addChild(s);
+            }
+            resolve();
+          }
+        });
       });
     });
-  });
 
-  Promise.all(promises).then(() => {
-    this.spinning = false;
-    this.checkWins();
-  });
-}
-
+    Promise.all(promises).then(() => {
+      this.spinning = false;
+      this.checkWins();
+    });
+  }
 
   checkWins() {
     const middleRow = this.reels.map(reel => {
@@ -140,6 +146,7 @@ spinReels() {
     });
     const first = middleRow[0];
     const allSame = middleRow.every(item => item === first);
+
     if (allSame) {
       this.score += 100;
       this.winMessage.text = 'You win 100!';
@@ -147,9 +154,9 @@ spinReels() {
       this.winMessage.text = '';
     }
     this.scoreLabel.text = `Coins: ${this.score}`;
-  } 
+  }
+}
 
-} 
 
 function createSymbolSprite(name) {
   const tex = this.symbolTextures[name];
@@ -157,8 +164,6 @@ function createSymbolSprite(name) {
     const sprite = new PIXI.Sprite(tex);
     sprite.width  = 100;
     sprite.height = 100;
-
-   
     sprite.filters = [
       new GlowFilter({
         distance:      15,
@@ -168,11 +173,11 @@ function createSymbolSprite(name) {
         quality:       0.5
       })
     ];
-
     return sprite;
   }
 
-    const g = new PIXI.Graphics();
+
+  const g = new PIXI.Graphics();
   const colorMap = {
     L1: 0xff6666, L2: 0xffcc66, L3: 0x99cc66, L4: 0x66cccc,
     W1: 0xff0000, S1: 0xffff00, F1: 0x999999
@@ -180,19 +185,17 @@ function createSymbolSprite(name) {
   g.beginFill(colorMap[name] || 0x444444);
   g.drawRoundedRect(0, 0, 100, 100, 12);
   g.endFill();
-  const label = new PIXI.Text(name, {
-    fontFamily: 'Arial', fontSize: 24, fill: 0x000000
-  });
+
+  const label = new PIXI.Text(name, { fontFamily:'Arial', fontSize:24, fill:0x000000 });
   label.anchor.set(0.5);
-  label.x = 50;
-  label.y = 50;
+  label.x = 50; label.y = 50;
+
   const container = new PIXI.Container();
   container.addChild(g, label);
   return container;
 }
 
-
 function getRandomSymbol() {
-  const pool = ['L1', 'L2', 'L3', 'L4', 'F1', 'W1', 'S1'];
+  const pool = ['L1','L2','L3','L4','F1','W1','S1'];
   return pool[Math.floor(Math.random() * pool.length)];
 }
