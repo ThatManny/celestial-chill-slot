@@ -1,5 +1,5 @@
+import * as PIXI from 'https://cdn.jsdelivr.net/npm/pixi.js@7/+esm';
 
-import * as PIXI from 'https://cdn.jsdelivr.net/npm/pixi.js@7/dist/browser/pixi.mjs';
 
 
 export class CelestialChillGame {
