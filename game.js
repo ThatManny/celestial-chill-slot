@@ -1,3 +1,5 @@
+console.log("▶️ game.js loaded");
+
 import * as PIXI from 'https://cdn.jsdelivr.net/npm/pixi.js@7.4.2/+esm';
 
 
