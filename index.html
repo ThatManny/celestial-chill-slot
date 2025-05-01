@@ -11,15 +11,15 @@
 <body>
   <canvas id="game-canvas"></canvas>
 
+<script type="module">
+  import * as PIXI from 'https://cdn.jsdelivr.net/npm/pixi.js@7/dist/browser/pixi.mjs';
+  window.PIXI = PIXI;
+</script>
 
-<script src="https://pixijs.download/v7.4.2/pixi.min.js"></script>
 
 
-  <!-- 2) PIXI filters (they hook into window.PIXI) -->
-  <script src="https://pixijs.download/filters/glow/pixi-filters-glow.min.js"></script>
-  <script src="https://pixijs.download/filters/blur/pixi-filters-blur.min.js"></script>
 
-  <!-- 3) GSAP (order here doesn’t matter) -->
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
   <!-- 4) Your module entry-point -->
