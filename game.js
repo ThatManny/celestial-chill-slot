@@ -100,6 +100,7 @@ this.freeSpinsLabel.x = this.app.screen.width / 2;
   }
 
 
+
     onAssetsLoaded(resources) {
     this.symbolTextures = {
       W1: resources["assets/wild_pheonix.png"].texture,
@@ -110,45 +111,82 @@ this.freeSpinsLabel.x = this.app.screen.width / 2;
       L3: resources["assets/featherpurple.png"].texture,
       L4: resources["assets/featherblue.png"].texture,
     };
+      
+spinReels() {
+ 
+  if (this.spinning) return;
+  this.spinning = true;
+
+ 
+  const promises = this.reels.map((reel, i) => {
+    return new Promise(resolve => {
+      gsap.to(reel, {
+        y: reel.y + 600,               
+        duration: 0.6 + i * 0.1,        
+        ease: "power4.out",
+        onComplete: () => {
+          
+          reel.y = 0;
+
+         
+          reel.removeChildren();
+          for (let j = 0; j < 7; j++) {
+            const name = getRandomSymbol();
+            const s = createSymbolSprite.call(this, name);
+            s.y = j * 100;
+            reel.addChild(s);
+          }
+          resolve();
+        }
+      });
+    });
+  });
+
+ 
+  Promise.all(promises).then(() => {
+    this.spinning = false;
+    this.checkWins();    
+  });
+}
+
   }
 
-
 function createSymbolSprite(name) {
-  const container = new PIXI.Container();
-  const colorMap = {
-    L1: 0xff6666,
-    L2: 0xffcc66,
-    L3: 0x99cc66,
-    L4: 0x66cccc,
-    L5: 0x6699cc,
-    L6: 0xcc66cc,
-    H1: 0xffffff,
-    W1: 0xff0000,
-    S1: 0xffff00
-  };
+ 
+  const tex = this.symbolTextures?.[name] ?? null;
 
-  const graphics = new PIXI.Graphics();
-  graphics.beginFill(colorMap[name] || 0x999999);
-  graphics.drawRoundedRect(0, 0, 100, 100, 12);
-  graphics.endFill();
+  const sprite = tex
+    ? new PIXI.Sprite(tex)
+    : (() => {
+        const g = new PIXI.Graphics();
+        g.beginFill(colorMap[name] || 0x999999);
+        g.drawRoundedRect(0,0,100,100,12);
+        g.endFill();
+        return g;
+      })();
 
-  const label = new PIXI.Text(name, {
-    fontFamily: "Arial",
-    fontSize: 24,
-    fill: 0x000000,
-    align: "center"
-  });
-  label.anchor.set(0.5);
-  label.x = 50;
-  label.y = 50;
-
-  container.addChild(graphics);
-  container.addChild(label);
-
-  return container;
+  sprite.width = 100;
+  sprite.height = 100;
+  return sprite;
 }
+
 
 function getRandomSymbol() {
   const symbolPool = ["L1", "L2", "L3", "L4", "F1", "W1", "S1"];
   return symbolPool[Math.floor(Math.random() * symbolPool.length)];
+}
+checkWins() {
+ 
+  const middleRowSymbols = this.reels.map(r => {
+    
+    return r.getChildAt(2).texture ?? r.getChildAt(2).text;
+  });
+  const allSame = middleRowSymbols.every(s => s === middleRowSymbols[0]);
+  if (allSame) {
+    this.score += 100;
+    this.winMessage.text = "You win 100!";
+  } else {
+    this.winMessage.text = "";
+  }
+  this.scoreLabel.text = `Coins: ${this.score}`;
 }
