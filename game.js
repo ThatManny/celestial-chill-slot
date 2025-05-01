@@ -88,14 +88,15 @@ export class CelestialChillGame {
   }
 
   onAssetsLoaded(resources) {
+    
     this.symbolTextures = {
-      W1: resources['assets/wild_pheonix.png'].texture,
-      S1: resources['assets/scatter_wings.png'].texture,
-      F1: resources['assets/golden_feather.png'].texture,
-      L1: resources['assets/feathergreen.png'].texture,
-      L2: resources['assets/featherred.png'].texture,
-      L3: resources['assets/featherpurple.png'].texture,
-      L4: resources['assets/featherblue.png'].texture,
+      W1: resources.W1.texture,
+      S1: resources.S1.texture,
+      F1: resources.F1.texture,
+      L1: resources.L1.texture,
+      L2: resources.L2.texture,
+      L3: resources.L3.texture,
+      L4: resources.L4.texture,
     };
   }
 
