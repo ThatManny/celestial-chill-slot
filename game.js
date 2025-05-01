@@ -11,18 +11,27 @@ export class CelestialChillGame {
   }
 
   init() {
+    console.log("🚀 init() called");               // (A)
+
+    // Grab the <canvas> element
     const canvas = document.getElementById('game-canvas');
     if (!canvas) {
-      console.error("Canvas not found. Make sure it exists in the HTML before calling init().");
+      console.error("Canvas not found!");
       return;
     }
 
-    this.app = new PIXI.Application({
-      width: 1280,
-      height: 720,
-      backgroundColor: 0x0a1a2f,
-      view: canvas
-    });
+    
+    this.app = new PIXI.Application({ view: canvas });
+    console.log("PIXI.Application created:", this.app);  // (B)
+
+   
+    const g = new PIXI.Graphics();
+    g.beginFill(0xff0000);
+    g.drawRect(0, 0, 300, 300);
+    g.endFill();
+    this.app.stage.addChild(g);
+    console.log("Drew a red square");             // (C)
+  }
 
     
     this.freeSpinsLabel = new PIXI.Text('', {
