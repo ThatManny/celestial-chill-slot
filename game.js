@@ -78,7 +78,7 @@ init() {
   });
   spinButton.anchor.set(0.5);
   spinButton.x = this.app.screen.width / 2;
-  spinButton.y = 650;
+  spinButton.y = this.app.screen.height - 200;  
 spinButton.eventMode = 'static';   
 spinButton.buttonMode = true;     
   spinButton.on('pointerdown', () => this.spinReels());
