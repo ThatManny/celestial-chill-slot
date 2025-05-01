@@ -1,8 +1,7 @@
-import * as PIXI from 'https://cdn.jsdelivr.net/npm/pixi.js@7/+esm';
+import * as PIXI from 'https://cdn.jsdelivr.net/npm/pixi.js@7.4.2/+esm';
 import { CelestialChillGame } from './game.js';
 
 window.addEventListener("DOMContentLoaded", async () => {
-  
   const assetList = [
     "assets/wild_pheonix.png",
     "assets/scatter_wings.png",
@@ -13,7 +12,6 @@ window.addEventListener("DOMContentLoaded", async () => {
     "assets/featherblue.png"
   ];
 
- 
   let resources;
   try {
     resources = await PIXI.Assets.load(assetList);
@@ -22,7 +20,6 @@ window.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
- 
   const game = new CelestialChillGame();
   game.onAssetsLoaded(resources);
   game.init();
