@@ -11,18 +11,19 @@
 <body>
   <canvas id="game-canvas"></canvas>
 
-  <!-- 1) PIXI UMD bundle must load first -->
+  <!-- 1) PIXI UMD bundle (drops window.PIXI) -->
   <script src="https://pixijs.download/v7.2.4/pixi.min.js"></script>
 
-  <!-- 2) PIXI filter plugins hook into that global PIXI -->
+  <!-- 2) PIXI filters (they hook into window.PIXI) -->
   <script src="https://pixijs.download/filters/glow/pixi-filters-glow.min.js"></script>
   <script src="https://pixijs.download/filters/blur/pixi-filters-blur.min.js"></script>
 
-  <!-- 3) GSAP (doesn’t depend on PIXI) -->
+  <!-- 3) GSAP (order here doesn’t matter) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
-  <!-- 4) Your module entry-point runs last -->
+  <!-- 4) Your module entry-point -->
   <script type="module" src="main.js"></script>
 </body>
+
 </html>
 
