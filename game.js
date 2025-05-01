@@ -10,25 +10,25 @@ export class CelestialChillGame {
     this.spinning = false;
   }
 
-   init() {
-    console.log("🚀 init() called");               // (A)
+  init() {
+  console.log("🚀 init() called");
 
-    const canvas = document.getElementById('game-canvas');
-    if (!canvas) {
-      console.error("Canvas not found!");
-      return;
-    }
-
-    this.app = new PIXI.Application({ view: canvas });
-    console.log("PIXI.Application created:", this.app);  // (B)
-
-    const g = new PIXI.Graphics();
-    g.beginFill(0xff0000);
-    g.drawRect(0, 0, 300, 300);
-    g.endFill();
-    this.app.stage.addChild(g);
-    console.log("Drew a red square");             // (C)
+  const canvas = document.getElementById('game-canvas');
+  if (!canvas) {
+    console.error("Canvas not found!");
+    return;
   }
+
+  this.app = new PIXI.Application({ view: canvas });
+  console.log("PIXI.Application created:", this.app);
+
+  const g = new PIXI.Graphics();
+  g.beginFill(0xff0000);
+  g.drawRect(0, 0, 300, 300);
+  g.endFill();
+  this.app.stage.addChild(g);
+  console.log("Drew a red square");
+}
 
 
   onAssetsLoaded(resources) {
