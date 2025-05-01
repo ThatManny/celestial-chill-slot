@@ -1,7 +1,8 @@
 console.log("▶️ game.js loaded");
 
 import * as PIXI from 'https://cdn.jsdelivr.net/npm/pixi.js@7.4.2/+esm';
-
+import { GlowFilter } from 'https://cdn.jsdelivr.net/npm/@pixi/filter-glow/+esm';
+import { BlurFilter } from 'https://cdn.jsdelivr.net/npm/@pixi/filter-blur/+esm';
 
 export class CelestialChillGame {
   constructor() {
@@ -99,37 +100,38 @@ spinButton.buttonMode = true;
       L4: resources['assets/featherblue.png'].texture,
     };
   } 
+spinReels() {
+  if (this.spinning) return;
+  this.spinning = true;
 
-  spinReels() {
-    if (this.spinning) return;
-    this.spinning = true;
+  const promises = this.reels.map((reel, i) => {
+    return new Promise(resolve => {
+     
+      reel.filters = [ new BlurFilter(4) ];
 
-    const promises = this.reels.map((reel, i) => {
-      return new Promise(resolve => {
-        gsap.to(reel, {
-          y: reel.y + 600,
-          duration: 0.6 + i * 0.1,
-          ease: 'power4.out',
-          onComplete: () => {
-            reel.y = 0;
-            reel.removeChildren();
-            for (let j = 0; j < 7; j++) {
-              const symbolName = getRandomSymbol();
-              const symbol = createSymbolSprite.call(this, symbolName);
-              symbol.y = j * 100;
-              reel.addChild(symbol);
-            }
-            resolve();
-          }
-        });
+      gsap.to(reel, {
+        y: reel.y + 600,
+        duration: 0.6 + i * 0.1,
+        ease: 'power4.out',
+        onComplete: () => {
+         
+          reel.filters = [];
+
+          reel.y = offsetY;      
+          reel.removeChildren();
+         
+          resolve();
+        }
       });
     });
+  });
 
-    Promise.all(promises).then(() => {
-      this.spinning = false;
-      this.checkWins();
-    });
-  } 
+  Promise.all(promises).then(() => {
+    this.spinning = false;
+    this.checkWins();
+  });
+}
+
 
   checkWins() {
     const middleRow = this.reels.map(reel => {
@@ -149,21 +151,28 @@ spinButton.buttonMode = true;
 
 } 
 
-
-
 function createSymbolSprite(name) {
-  
   const tex = this.symbolTextures[name];
   if (tex) {
-    
     const sprite = new PIXI.Sprite(tex);
     sprite.width  = 100;
     sprite.height = 100;
+
+   
+    sprite.filters = [
+      new GlowFilter({
+        distance:      15,
+        outerStrength: 2,
+        innerStrength: 0,
+        color:         0xffffff,
+        quality:       0.5
+      })
+    ];
+
     return sprite;
   }
 
-  
-  const g = new PIXI.Graphics();
+    const g = new PIXI.Graphics();
   const colorMap = {
     L1: 0xff6666, L2: 0xffcc66, L3: 0x99cc66, L4: 0x66cccc,
     W1: 0xff0000, S1: 0xffff00, F1: 0x999999
