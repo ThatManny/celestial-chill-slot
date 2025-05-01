@@ -1,10 +1,9 @@
 import * as PIXI from 'https://cdn.jsdelivr.net/npm/pixi.js@7/+esm';
-
 import { CelestialChillGame } from './game.js';
 
 window.addEventListener("DOMContentLoaded", async () => {
   
-  const urls = [
+  const assetList = [
     "assets/wild_pheonix.png",
     "assets/scatter_wings.png",
     "assets/golden_feather.png",
@@ -14,16 +13,17 @@ window.addEventListener("DOMContentLoaded", async () => {
     "assets/featherblue.png"
   ];
 
+ 
   let resources;
   try {
-    resources = await PIXI.Assets.load(urls);
+    resources = await PIXI.Assets.load(assetList);
   } catch (err) {
-    console.error("Asset load failed:", err);
+    console.error("Failed to load assets:", err);
     return;
   }
 
-  
+ 
   const game = new CelestialChillGame();
-  game.init();                    // canvas is on the page
-  game.onAssetsLoaded(resources); // pass the map if you need it
+  game.onAssetsLoaded(resources);
+  game.init();
 });
