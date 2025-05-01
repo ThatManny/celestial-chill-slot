@@ -1,4 +1,3 @@
-
 import { CelestialChillGame } from './game.js';
 
 const PIXI = window.PIXI;
