@@ -1,6 +1,8 @@
+
+import * as PIXI from 'https://cdn.jsdelivr.net/npm/pixi.js@7/dist/browser/pixi.mjs';
+
 import { CelestialChillGame } from './game.js';
 
-const PIXI = window.PIXI;
 
 
 window.addEventListener("DOMContentLoaded", () => {
