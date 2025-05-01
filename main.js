@@ -1,27 +1,29 @@
-
-import * as PIXI from 'https://cdn.jsdelivr.net/npm/pixi.js@7/dist/browser/pixi.mjs';
+import * as PIXI from 'https://cdn.jsdelivr.net/npm/pixi.js@7/+esm';
 
 import { CelestialChillGame } from './game.js';
 
+window.addEventListener("DOMContentLoaded", async () => {
+  
+  const urls = [
+    "assets/wild_pheonix.png",
+    "assets/scatter_wings.png",
+    "assets/golden_feather.png",
+    "assets/feathergreen.png",
+    "assets/featherred.png",
+    "assets/featherpurple.png",
+    "assets/featherblue.png"
+  ];
 
-
-window.addEventListener("DOMContentLoaded", () => {
-  if (!PIXI.Loader) {
-    console.error("PIXI not loaded.");
+  let resources;
+  try {
+    resources = await PIXI.Assets.load(urls);
+  } catch (err) {
+    console.error("Asset load failed:", err);
     return;
   }
 
-  PIXI.Loader.shared
-    .add("W1", "assets/wild_pheonix.png")
-    .add("S1", "assets/scatter_wings.png")
-    .add("F1", "assets/golden_feather.png")
-    .add("L1", "assets/feathergreen.png")
-    .add("L2", "assets/featherred.png")
-    .add("L3", "assets/featherpurple.png")
-    .add("L4", "assets/featherblue.png")
-    .load(() => {
-      const game = new CelestialChillGame();
-      game.init(); // must come AFTER canvas exists
-      game.onAssetsLoaded(); // optional
-    });
+  
+  const game = new CelestialChillGame();
+  game.init();                    // canvas is on the page
+  game.onAssetsLoaded(resources); // pass the map if you need it
 });
