@@ -152,40 +152,36 @@ spinButton.buttonMode = true;
 
 
 function createSymbolSprite(name) {
-  const container = new PIXI.Container();
+  
   const tex = this.symbolTextures[name];
-
   if (tex) {
+    
     const sprite = new PIXI.Sprite(tex);
-    sprite.width = 100;
+    sprite.width  = 100;
     sprite.height = 100;
-    container.addChild(sprite);
-  } else {
-    const colorMap = {
-      L1: 0xff6666, L2: 0xffcc66, L3: 0x99cc66,
-      L4: 0x66cccc, W1: 0xff0000, S1: 0xffff00,
-      F1: 0x999999
-    };
-    const g = new PIXI.Graphics();
-    g.beginFill(colorMap[name] || 0x999999);
-    g.drawRoundedRect(0, 0, 100, 100, 12);
-    g.endFill();
-    container.addChild(g);
-
-    const label = new PIXI.Text(name, {
-      fontFamily: 'Arial',
-      fontSize: 24,
-      fill: 0x000000,
-      align: 'center'
-    });
-    label.anchor.set(0.5);
-    label.x = 50;
-    label.y = 50;
-    container.addChild(label);
+    return sprite;
   }
 
+  
+  const g = new PIXI.Graphics();
+  const colorMap = {
+    L1: 0xff6666, L2: 0xffcc66, L3: 0x99cc66, L4: 0x66cccc,
+    W1: 0xff0000, S1: 0xffff00, F1: 0x999999
+  };
+  g.beginFill(colorMap[name] || 0x444444);
+  g.drawRoundedRect(0, 0, 100, 100, 12);
+  g.endFill();
+  const label = new PIXI.Text(name, {
+    fontFamily: 'Arial', fontSize: 24, fill: 0x000000
+  });
+  label.anchor.set(0.5);
+  label.x = 50;
+  label.y = 50;
+  const container = new PIXI.Container();
+  container.addChild(g, label);
   return container;
 }
+
 
 function getRandomSymbol() {
   const pool = ['L1', 'L2', 'L3', 'L4', 'F1', 'W1', 'S1'];
