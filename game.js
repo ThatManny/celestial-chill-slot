@@ -1,22 +1,19 @@
-import * as PIXI from 'https://cdn.jsdelivr.net/npm/pixi.js@7.4.2/+esm';
-import { GlowFilter }  from 'https://cdn.jsdelivr.net/npm/@pixi/filter-glow/+esm';
-import { BlurFilter }  from 'https://cdn.jsdelivr.net/npm/@pixi/filter-blur/+esm';
+import * as PIXI      from 'https://cdn.jsdelivr.net/npm/pixi.js@7.4.2/dist/browser/pixi.mjs';
+import { GlowFilter } from 'https://cdn.jsdelivr.net/npm/@pixi/filter-glow/+esm';
+import { BlurFilter } from 'https://cdn.jsdelivr.net/npm/@pixi/filter-blur/+esm';
 
 export class CelestialChillGame {
   constructor() {
-    this.app = null;
-    this.score = 0;
-    this.reels = [];
+    this.app            = null;
+    this.score          = 0;
+    this.reels          = [];
     this.symbolTextures = {};
-    this.spinning = false;
+    this.spinning       = false;
   }
 
   init() {
     const canvas = document.getElementById('game-canvas');
-    if (!canvas) {
-      console.error("Canvas not found.");
-      return;
-    }
+    if (!canvas) return console.error('Canvas not found.');
 
     this.app = new PIXI.Application({
       width: 1280,
@@ -25,7 +22,7 @@ export class CelestialChillGame {
       view: canvas
     });
 
-    
+   
     this.freeSpinsLabel = new PIXI.Text('', {
       fontFamily: 'Arial', fontSize: 24, fill: 0x66ccff, fontWeight: 'bold'
     });
@@ -52,12 +49,12 @@ export class CelestialChillGame {
     this.app.stage.addChild(this.winMessage);
 
    
-    const reelCount       = 6;
-    const symbolsPerReel  = 7;
-    const symbolSize      = 100;
-    const reelSpacing     = 120;
-    const offsetX         = 100;
-    const offsetY         = 100;
+    const reelCount      = 6;
+    const symbolsPerReel = 7;
+    const symbolSize     = 100;
+    const reelSpacing    = 120;
+    const offsetX        = 100;
+    const offsetY        = 100;
 
     for (let i = 0; i < reelCount; i++) {
       const reel = new PIXI.Container();
@@ -80,8 +77,8 @@ export class CelestialChillGame {
     });
     spinButton.anchor.set(0.5);
     spinButton.x = this.app.screen.width / 2;
-    spinButton.y = this.app.screen.height - 200;  
-    spinButton.eventMode = 'static';
+    spinButton.y = this.app.screen.height - 200; 
+    spinButton.eventMode  = 'static';
     spinButton.buttonMode = true;
     spinButton.on('pointerdown', () => this.spinReels());
     this.app.stage.addChild(spinButton);
@@ -104,10 +101,10 @@ export class CelestialChillGame {
     if (this.spinning) return;
     this.spinning = true;
 
-    const offsetY = 100;  
+    const offsetY = 100;
 
-    const promises = this.reels.map((reel, i) => {
-      return new Promise(resolve => {
+    const promises = this.reels.map((reel, i) =>
+      new Promise(resolve => {
         
         reel.filters = [ new BlurFilter(4) ];
 
@@ -119,7 +116,7 @@ export class CelestialChillGame {
             
             reel.filters = [];
 
-          
+            
             reel.y = offsetY;
             reel.removeChildren();
             for (let j = 0; j < 7; j++) {
@@ -131,8 +128,8 @@ export class CelestialChillGame {
             resolve();
           }
         });
-      });
-    });
+      })
+    );
 
     Promise.all(promises).then(() => {
       this.spinning = false;
@@ -141,12 +138,12 @@ export class CelestialChillGame {
   }
 
   checkWins() {
-    const middleRow = this.reels.map(reel => {
-      const child = reel.getChildAt(2);
-      return child.texture ? child.texture : child.text;
+    const middleRow = this.reels.map(r => {
+      const c = r.getChildAt(2);
+      return c.texture ? c.texture : c.text;
     });
     const first = middleRow[0];
-    const allSame = middleRow.every(item => item === first);
+    const allSame = middleRow.every(m => m === first);
 
     if (allSame) {
       this.score += 100;
@@ -177,17 +174,19 @@ function createSymbolSprite(name) {
     return sprite;
   }
 
-
+  
   const g = new PIXI.Graphics();
   const colorMap = {
-    L1: 0xff6666, L2: 0xffcc66, L3: 0x99cc66, L4: 0x66cccc,
+    L1: 0xff6666, L2: 0xffcc66, L3: 0x99cc66, L4:0x66cccc,
     W1: 0xff0000, S1: 0xffff00, F1: 0x999999
   };
   g.beginFill(colorMap[name] || 0x444444);
   g.drawRoundedRect(0, 0, 100, 100, 12);
   g.endFill();
 
-  const label = new PIXI.Text(name, { fontFamily:'Arial', fontSize:24, fill:0x000000 });
+  const label = new PIXI.Text(name, {
+    fontFamily:'Arial', fontSize:24, fill:0x000000
+  });
   label.anchor.set(0.5);
   label.x = 50; label.y = 50;
 
