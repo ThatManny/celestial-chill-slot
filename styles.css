@@ -3,8 +3,8 @@ body {
   background: #0a1a2f;
   
 }
-canvas {
-  display: block;           
-  margin: 20px auto;        
-}
 
+canvas {
+  display: block;       
+  margin: 20px auto;    
+}
